@@ -1,0 +1,7 @@
+{
+  "name": "future-genius-crawler",
+  "dependencies": {
+    "mongodb": "^2.2.24",
+    "node-genius": "^1.1.0"
+  }
+}
