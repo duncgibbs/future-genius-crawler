@@ -17,12 +17,27 @@ function collectQuotes() {
     });
 }
 
+function getTotalQuotes() {
+    var summary = document.getElementById('left').innerText;
+    var totals = summary.split(' of ');
+    return totals.length > 1 ? parseInt(totals[1].replace(',','').split(' ')[0]) : null;
+}
+
 casper.start('http://www.imdb.com/search/', function() {
     this.waitForSelector('form[action="/search/text"]');
 });
 
 casper.then(function() {
     this.fill('form[action="/search/text"]', {'field': 'quotes', 'q': casper.cli.get(0)}, true);
+});
+
+casper.then(function() {
+    var totalQuotes = this.evaluate(getTotalQuotes);
+    if (totalQuotes !== null) {
+        var start = utils.randomInt(1, totalQuotes);
+        var newUrl = String(this.getCurrentUrl() + '&start=' + start);
+        this.open(newUrl);
+    }
 });
 
 casper.then(function() {
