@@ -1,6 +1,6 @@
 module.exports = function (accessToken) {
-    var database = require('./database');
-    var utils = require('./utils');
+    var database = require('./database')();
+    var utils = require('./utils')();
     var Genius = require('node-genius');
     var geniusClient = new Genius(accessToken);
     
@@ -58,12 +58,14 @@ module.exports = function (accessToken) {
     module.makeAnnotation = function(quote, referent) {
         if (quote.episode !== '') {
             var markdown = "From the episode '" + quote.episode 
-                + "' from my favorite show '" + quote.title 
+                + "' from " + utils.getRandomElements(["my", "Future's"], 1) + " favorite show '" + quote.title 
                 + "'\n>" + quote.quote;
         } else {
-            var markdown = "From my favorite movie '" + quote.title 
+            var markdown = "From " + utils.getRandomElements(["my", "Future's"], 1) + " favorite movie '" + quote.title 
                 + "'\n> " + quote.quote;
         }
+        console.log('Making annotation: ');
+        console.log(markdown);
         geniusClient.createAnnotation({
             "annotation": {
                 "body": {

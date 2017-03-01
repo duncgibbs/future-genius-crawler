@@ -1,5 +1,4 @@
-var utils = require('./helpers/utils');
-
+var utils = require('../helpers/utils')();
 var casper = require('casper').create();
 
 function collectQuotes() {

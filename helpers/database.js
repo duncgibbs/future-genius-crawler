@@ -32,5 +32,13 @@ module.exports = function() {
         });
     };
 
+    module.getQuotes = function() {
+        databaseCall('quotes', function(collection) {
+            collection.find({}).toArray(function(err, quotes) {
+                console.log(quotes);
+            });
+        });
+    };
+
     return module;
 }

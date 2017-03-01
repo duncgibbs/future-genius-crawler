@@ -23,7 +23,7 @@ module.exports = function() {
 
     module.getAccessToken = function() {
         const execSync = require('child_process').execSync;
-        const output = execSync('node scripts/accessTokenGenerator.js');
+        const output = execSync('node scripts/access_token_generator.js');
         const accessToken = String(output);
         return accessToken.substring(0, accessToken.length - 1);
     };
