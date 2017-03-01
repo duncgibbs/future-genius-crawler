@@ -15,7 +15,14 @@ module.exports = {
         return array.slice(randomIdx, randomEnd);
     },
 
-    cleanupLyrics: function(string) {
+    cleanupString: function(string) {
         return string.replace(/[^a-zA-Z ]/g, "")
+    },
+
+    getAccessToken: function() {
+        const execSync = require('child_process').execSync;
+        const output = execSync('node helpers/accessTokenGenerator.js');
+        const accessToken = String(output);
+        return accessToken.substring(0, accessToken.length - 1);
     }
 }

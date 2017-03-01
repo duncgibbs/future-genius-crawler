@@ -1,22 +1,32 @@
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://localhost:27017/future-genius-crawler';
 
+function databaseCall(collectionName, callback) {
+    MongoClient.connect(url, function(err, db) {
+        var collection = db.collection(collectionName);
+        callback(collection);
+        db.close();
+    });
+}
+
 module.exports = {
     getArtistSongCount: function(artistId, callback) {
-        MongoClient.connect(url, function(err, db) {
-            var collection = db.collection('artists');
+        databaseCall('artists', function(collection) {
             collection.find({id: artistId}).toArray(function(err, artists) {
                 callback(artists[0]);
             });
-            db.close();
         });
     },
 
     insertArtistSongCount: function(artistId, songCount) {
-        MongoClient.connect(url, function(err, db) {
-            var collection = db.collection('artists');
+        databaseCall('artists', function(collection) {
             collection.insert({id: artistId, song_count: songCount});
-            db.close();
+        });
+    },
+
+    insertQuote: function(keyword, quote) {
+        databaseCall('quotes', function(collection) {
+            collection.insert({keyword: keyword, quote: quote.quote, title: quote.title, episode: quote.episode});
         });
     }
 }

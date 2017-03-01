@@ -1,15 +1,23 @@
-var genius = require('./helpers/genius');
-var config = require('./config');
 var utils = require('./helpers/utils');
+var accessToken = utils.getAccessToken();
+var genius = require('./helpers/genius')(accessToken);
+var config = require('./config');
+var casperHelpers = require('./helpers/casper_helper');
+var database = require('./helpers/database');
 
-var Genius = require('node-genius');
-var geniusClient = new Genius(config.access_token);
+function getRandomWord(referent) {
+    var lyrics = referent.fragment;
+    var words = utils.cleanupString(lyrics).split(' ');
+    var randomWord = String(utils.getRandomElements(words, 1));
+    console.log(randomWord + ' - from "' + referent.fragment + '"');
+    return randomWord;
+}
 
 genius.getRandomSongFromArtist(config.future_api_id, function(song) {
     genius.getRandomLyricFromSong(song.id, function(referent) {
-        var lyrics = referent.fragment;
-        var words = utils.cleanupLyrics(lyrics).split(' ');
-        console.log(utils.getRandomElements(words, 2).join(' ') + ' - from "' + referent.fragment + '"');
+        var randomWord = getRandomWord(referent);
+        var quote = JSON.parse(casperHelpers.getIMDBQuote(randomWord))[0];
+        database.insertQuote(randomWord, quote);
+        genius.makeAnnotation(quote, referent);
     });
 });
-
