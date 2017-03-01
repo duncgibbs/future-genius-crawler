@@ -3,6 +3,7 @@ module.exports = function (accessToken) {
     var utils = require('./utils');
     var Genius = require('node-genius');
     var geniusClient = new Genius(accessToken);
+    
     var module = {};
 
     function getTotalSongCount(artistId, page, per_page, resolve) {
