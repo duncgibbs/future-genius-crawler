@@ -1,7 +1,9 @@
 {
   "name": "future-genius-crawler",
   "dependencies": {
+    "express": "^4.14.1",
     "mongodb": "^2.2.24",
-    "node-genius": "^1.1.0"
+    "node-genius": "^1.1.0",
+    "open": "0.0.5"
   }
 }
