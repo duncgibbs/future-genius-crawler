@@ -26,9 +26,30 @@ module.exports = function() {
         });
     };
 
-    module.insertQuote = function(keyword, quote) {
+    module.insertQuote = function(quote, callback) {
         databaseCall('quotes', function(collection) {
-            collection.insert({keyword: keyword, quote: quote.quote, title: quote.title, episode: quote.episode});
+            var quoteObject = {
+                keyword: quote.keyword,
+                quote: quote.quote,
+                title: quote.title,
+                episode: quote.episode
+            };
+
+            collection.insert(quoteObject, function(error, result) {
+                callback(result);
+            });
+
+        });
+    };
+
+    module.insertAnnotation = function(annotation, quoteId) {
+        databaseCall('annotations', function(collection) {
+            var annotationObject = {
+                annotation_id: annotation.annotation.id,
+                annotation_url: annotation.annotation.share_url,
+                quote: quoteId
+            };
+            collection.insert(annotationObject);
         });
     };
 

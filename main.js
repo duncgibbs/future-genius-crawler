@@ -5,27 +5,22 @@ var config = require('./config');
 var casperHelpers = require('./helpers/casper_helper')();
 var database = require('./helpers/database')();
 
-function getRandomWord(referent) {
-    var lyrics = referent.fragment;
+function getRandomWord(lyrics) {
     var words = utils.cleanupString(lyrics).split(' ');
     var randomWord = String(utils.getRandomElements(words, 1));
     console.log('Keyword: "' + randomWord + '"');
-    console.log('From: "' + referent.fragment + '"');
+    console.log('From: "' + lyrics.replace("\n","") + '"');
     return randomWord;
 }
 
 genius.getRandomSongFromArtist(config.future_api_id, function(song) {
-    genius.getRandomLyricFromSong(song.id, function(referent) {
-        var randomWord = getRandomWord(referent);
-        var quotes = JSON.parse(casperHelpers.getIMDBQuote(randomWord));
-        var quote = quotes[0];
-        if (typeof(quote.title) !== 'undefined' && typeof(quote.quote) !== 'undefined') {
-            database.insertQuote(randomWord, quote);
-            genius.makeAnnotation(quote, referent);
-        } else {
-            console.log(quotes);
-        }
-    });
+    var fragment = casperHelpers.getRandomLyric(song.url);
+    var randomWord = getRandomWord(fragment);
+    var quote = JSON.parse(casperHelpers.getIMDBQuote(randomWord));
+    if (typeof(quote.title) !== 'undefined' && typeof(quote.quote) !== 'undefined') {
+        genius.makeAnnotation(quote, song.url, fragment);
+    } else {
+        console.log('Error: ' + quote);
+    }
 });
 
-//database.getQuotes();

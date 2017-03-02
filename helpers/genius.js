@@ -55,7 +55,7 @@ module.exports = function (accessToken) {
         });
     };
 
-    module.makeAnnotation = function(quote, referent) {
+    module.makeAnnotation = function(quote, annotationUrl, fragment) {
         if (quote.episode !== '') {
             var markdown = "From the episode '" + quote.episode 
                 + "' from " + utils.getRandomElements(["my", "Future's"], 1) + " favorite show '" + quote.title 
@@ -73,15 +73,17 @@ module.exports = function (accessToken) {
                 }
             },
             "referent": {
-                "raw_annotatable_url": referent.annotatable.url,
-                "fragment": referent.fragment
+                "raw_annotatable_url": annotationUrl,
+                "fragment": fragment
             },
             "web_page": {
                 "canonical_url": null,
                 "og_url": null
             }
         }, function(error, annotation) {
-            console.log(annotation || error);
+            database.insertQuote(quote, function(result) {
+                database.insertAnnotation(annotation.response, result.ops._id);
+            });
         });
     };
 
