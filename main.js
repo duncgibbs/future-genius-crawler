@@ -19,6 +19,7 @@ genius.getRandomSongFromArtist(config.future_api_id, function(song) {
     var quote = JSON.parse(casperHelpers.getIMDBQuote(randomWord));
     if (typeof(quote.title) !== 'undefined' && typeof(quote.quote) !== 'undefined') {
         genius.makeAnnotation(quote, song.url, fragment);
+        console.log('Success!');
     } else {
         console.log('Error: ' + quote);
     }

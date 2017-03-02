@@ -49,6 +49,7 @@ module.exports = function() {
                 annotation_url: annotation.annotation.share_url,
                 quote: quoteId
             };
+
             collection.insert(annotationObject);
         });
     };
