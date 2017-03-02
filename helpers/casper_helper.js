@@ -7,5 +7,11 @@ module.exports = function() {
         return String(child.stdout);
     };
 
+    module.getRandomLyric = function(songUrl) {
+        var spawn = require('child_process').spawnSync;
+        var child = spawn('casperjs' , ['scripts/lyric_getter.js', songUrl]);
+        return String(child.stdout);
+    };
+
     return module;
 }

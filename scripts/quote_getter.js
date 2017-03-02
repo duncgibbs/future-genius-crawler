@@ -1,5 +1,6 @@
 var utils = require('../helpers/utils')();
 var casper = require('casper').create();
+var keyword = casper.cli.get(0);
 
 function collectQuotes() {
     var rows = document.getElementsByTagName('tr');
@@ -27,7 +28,7 @@ casper.start('http://www.imdb.com/search/', function() {
 });
 
 casper.then(function() {
-    this.fill('form[action="/search/text"]', {'field': 'quotes', 'q': casper.cli.get(0)}, true);
+    this.fill('form[action="/search/text"]', {'field': 'quotes', 'q': keyword}, true);
 });
 
 casper.then(function() {
@@ -41,7 +42,9 @@ casper.then(function() {
 
 casper.then(function() {
     var quotes = this.evaluate(collectQuotes);
-    this.echo(JSON.stringify(utils.getRandomElements(quotes, 1)));
+    var chosenQuote = utils.getRandomElements(quotes, 1)[0];
+    chosenQuote.keyword = keyword;
+    this.echo(JSON.stringify(chosenQuote));
 });
 
 casper.run();
