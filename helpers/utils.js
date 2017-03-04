@@ -17,7 +17,7 @@ module.exports = function() {
         return array.slice(randomIdx, randomEnd);
     };
 
-    module.cleanupString = function(string) {
+    module.removeNonAlphabetic = function(string) {
         return string.replace(/[^a-zA-Z ]/g, "")
     };
 
@@ -27,6 +27,11 @@ module.exports = function() {
         const accessToken = String(output);
         return accessToken.substring(0, accessToken.length - 1);
     };
+
+    module.getRandomWord = function(lyrics) {
+        var words = this.removeNonAlphabetic(lyrics).split(' ');
+        return String(this.getRandomElements(words, 1));
+    }
 
     return module;
 }

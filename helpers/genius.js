@@ -55,7 +55,7 @@ module.exports = function (accessToken) {
         });
     };
 
-    module.makeAnnotation = function(quote, annotationUrl, fragment) {
+    module.makeAnnotation = function(quote, fragment, annotationUrl) {
         if (quote.episode !== '') {
             var markdown = "From the episode '" + quote.episode 
                 + "' from " + utils.getRandomElements(["my", "Future's"], 1) + " favorite show '" + quote.title 
@@ -64,8 +64,11 @@ module.exports = function (accessToken) {
             var markdown = "From " + utils.getRandomElements(["my", "Future's"], 1) + " favorite movie '" + quote.title 
                 + "'\n> " + quote.quote;
         }
+        console.log('-----');
         console.log('Making annotation: ');
+        console.log();
         console.log(markdown);
+        console.log();
         geniusClient.createAnnotation({
             "annotation": {
                 "body": {
@@ -81,8 +84,11 @@ module.exports = function (accessToken) {
                 "og_url": null
             }
         }, function(error, annotation) {
+            console.log('Successfully posted!');
             database.insertQuote(quote, function(result) {
                 database.insertAnnotation(annotation.response, result.ops._id);
+                console.log('-----');
+                console.log('All done.');
             });
         });
     };
