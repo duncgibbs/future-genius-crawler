@@ -6,7 +6,9 @@ module.exports = function (accessToken) {
     
     var module = {};
 
-    function getTotalSongCount(artistId, page, per_page, resolve) {
+    // because of the genius api we have to paginate through the results to see how many songs there are
+    // this is why we will save it for future use
+    function getTotalSongCountFromGenius(artistId, page, per_page, resolve) {
         var args = {'page': page, 'per_page': per_page};
         geniusClient.getArtistSongs(artistId, args, function (error, songs) {
             var response = JSON.parse(songs).response;
@@ -16,20 +18,22 @@ module.exports = function (accessToken) {
                 resolve(page);
             } else if (response.next_page === null) {
                 var newPage = (page-1)*per_page;
-                getTotalSongCount(artistId, newPage, 1, resolve);
+                getTotalSongCountFromGenius(artistId, newPage, 1, resolve);
             } else {
-                getTotalSongCount(artistId, page+1, per_page, resolve);
+                getTotalSongCountFromGenius(artistId, page+1, per_page, resolve);
             }
         });
     };
 
+    // this is going to see if we have the total song count for an artist saved in the database
+    // if we don't, more promises ahoy
     function getArtistSongCount(artistId, callback) {
         database.getArtistSongCount(artistId, function(artist) {
             if (artist) {
                 callback(artist.song_count);
             } else {
                 new Promise(function(resolve, reject) { 
-                    getTotalSongCount(artistId, 1, 50, resolve) 
+                    getTotalSongCountFromGenius(artistId, 1, 50, resolve) 
                 }).then(function(songCount) {
                     callback(songCount);
                 });
@@ -37,6 +41,7 @@ module.exports = function (accessToken) {
         });
     };
 
+    // this is going to grab a random song from the artist, but that has to be inside a promise
     module.getRandomSongFromArtist = function(artistId, callback) {
         getArtistSongCount(artistId, function(songCount) {
             var args = {'page': utils.randomInt(1,songCount), 'per_page': 1};
